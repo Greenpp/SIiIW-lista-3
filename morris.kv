@@ -1,0 +1,38 @@
+<GameLayout>:
+    cols: 2
+    rows: 1
+
+    FloatLayout:
+        size_hint: (.25, 1)
+
+        canvas.before:
+            Rectangle:
+                source: 'resources\\bkg.jpg'
+                size: self.size
+                pos: self.pos
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        canvas.before:
+            Color:
+                rgba: 1, 1, .8, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Image:
+            size_hint: None, None
+            color: 1, 1, 1, .5
+            source: 'resources\\board.png'
+            allow_stretch: True
+            width: self.parent.width if self.parent.width < self.parent.height else self.parent.height
+            height: self.parent.height if self.parent.height < self.parent.width else self.parent.width
+
+        BoardLayout:
+            rows: 7
+            cols: 7
+            size_hint: None, None
+            width: self.parent.width if self.parent.width < self.parent.height else self.parent.height
+            height: self.parent.height if self.parent.height < self.parent.width else self.parent.width
