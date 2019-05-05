@@ -1,10 +1,4 @@
-from game import Engine
-
-
-def main():
-    eng = Engine()
-    print('halo')
-
+from ui import MorrisApp
 
 if __name__ == '__main__':
-    main()
+    MorrisApp().run()
