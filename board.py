@@ -33,10 +33,14 @@ class Board:
         self.fields = {f.id: f for f in fields}
 
     def place(self, dest, piece):
-        pass
+        self.fields[dest].occupation = piece
 
     def move(self, source, dest):
-        pass
+        piece = self.fields[source].occupation
+        piece.last_position = source
+        self.fields[dest].occupation = piece
+
+        self.fields[source].occupation = None
 
     def get_state(self):
         pass
