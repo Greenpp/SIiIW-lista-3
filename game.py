@@ -22,6 +22,7 @@ class Engine:
     def handle_touch(self, field_id):
         if field_id in self.board.fields:
             if not isinstance(self.current_player, AI):
-                self.current_player.handle_touch(field_id)
+                if self.current_player.handle_touch(field_id):
+                    self.next_round()
                 return True
         return False

@@ -15,3 +15,6 @@ class Field:
     def connect(self, nbr):
         self.neighbours.append(nbr)
         nbr.neighbours.append(self)
+
+    def is_neighbour(self, field):
+        return field in self.neighbours

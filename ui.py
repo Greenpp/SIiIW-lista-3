@@ -67,3 +67,9 @@ class FieldButton(Button):
         self.background_color = (1, 1, 1, 1)
         self.background_normal = 'resources\\white_piece.png'
         self.background_down = 'resources\\white_piece.png'
+
+    def set_possible_move(self):
+        pass
+
+    def set_possible_remove(self):
+        pass
