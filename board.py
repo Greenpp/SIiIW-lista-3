@@ -33,7 +33,10 @@ class Board:
         self.fields = {f.id: f for f in fields}
 
     def place(self, dest, piece):
-        self.fields[dest].occupation = piece
+        if self.fields[dest].occupation is None:
+            self.fields[dest].occupation = piece
+            return True
+        return False
 
     def move(self, source, dest):
         piece = self.fields[source].occupation
