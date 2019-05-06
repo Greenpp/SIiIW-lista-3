@@ -60,13 +60,13 @@ class FieldButton(Button):
 
     def set_black(self):
         self.background_color = (1, 1, 1, 1)
-        self.background_normal = 'resources\\black_piece.png'
-        self.background_down = 'resources\\black_piece.png'
+        self.background_normal = 'resources/black_piece.png'
+        self.background_down = 'resources/black_piece.png'
 
     def set_white(self):
         self.background_color = (1, 1, 1, 1)
-        self.background_normal = 'resources\\white_piece.png'
-        self.background_down = 'resources\\white_piece.png'
+        self.background_normal = 'resources/white_piece.png'
+        self.background_down = 'resources/white_piece.png'
 
     def set_possible_move(self):
         pass

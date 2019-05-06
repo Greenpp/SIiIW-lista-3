@@ -7,7 +7,7 @@
 
         canvas.before:
             Rectangle:
-                source: 'resources\\bkg.jpg'
+                source: 'resources/bkg.jpg'
                 size: self.size
                 pos: self.pos
 
@@ -25,7 +25,7 @@
         Image:
             size_hint: None, None
             color: 1, 1, 1, .5
-            source: 'resources\\board.png'
+            source: 'resources/board.png'
             allow_stretch: True
             width: self.parent.width if self.parent.width < self.parent.height else self.parent.height
             height: self.parent.height if self.parent.height < self.parent.width else self.parent.width
