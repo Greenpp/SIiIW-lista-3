@@ -3,4 +3,12 @@ class Mill:
         self.fields = fields
 
     def check(self):
-        pass
+        color = None
+        for field in self.fields:
+            if field.occupation is None:
+                return False
+            elif color is None:
+                color = field.occupation.color
+            elif color != field.occupation.color:
+                return False
+        return True
