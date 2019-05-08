@@ -32,11 +32,14 @@ class Board:
 
         self.fields = {f.id: f for f in fields}
 
+    def get_empty_fields(self):
+        return [id_ for id_, f in self.fields if f.occupation is None]
+
+    def get_color_fields(self, color):
+        return [id_ for id_, f in self.fields if f.occupation is not None and f.occupation.color == color]
+
     def place(self, dest, piece):
-        if self.fields[dest].occupation is None:
-            self.fields[dest].occupation = piece
-            return True
-        return False
+        self.fields[dest].occupation = piece
 
     def move(self, source, dest):
         piece = self.fields[source].occupation
