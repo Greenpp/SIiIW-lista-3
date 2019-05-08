@@ -52,8 +52,9 @@ class FieldButton(Button):
     def on_press(self):
         app = App.get_running_app()
         eng = app.engine
-        if eng.handle_touch(self.field_id):
-            app.update_board_view()
+
+        eng.handle_touch(self.field_id)
+        app.update_board_view()
 
     def clear(self):
         self.background_color = (0, 0, 0, 0)

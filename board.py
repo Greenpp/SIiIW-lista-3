@@ -33,10 +33,20 @@ class Board:
         self.fields = {f.id: f for f in fields}
 
     def get_empty_fields(self):
-        return [id_ for id_, f in self.fields if f.occupation is None]
+        return [id_ for id_, f in self.fields.items() if f.occupation is None]
 
     def get_color_fields(self, color):
-        return [id_ for id_, f in self.fields if f.occupation is not None and f.occupation.color == color]
+        return [id_ for id_, f in self.fields.items() if f.occupation is not None and f.occupation.color == color]
+
+    def get_last_pos(self, field):
+        return self.fields[field].occupation.last_position
+
+    def in_mill(self, field):
+        mills = self.fields[field].mills
+        for mill in mills:
+            if mill.check():
+                return True
+        return False
 
     def place(self, dest, piece):
         self.fields[dest].occupation = piece
