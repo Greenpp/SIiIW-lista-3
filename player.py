@@ -1,11 +1,15 @@
 from board import Board
 from piece import Piece
 
-PIECES = 3
+PIECES = 5
+JUMP_THRESHOLD = 3
 
-EVENT_EMPTY_FIELD = 'empty_field'
-EVENT_MILL = 'mill'
-EVENT_REMOVED = 'removed'
+EVENT_NULL = 'n'
+EVENT_MILL = 'm'
+EVENT_REMOVED = 'rm'
+EVENT_SELECTED_MV = 'sm'
+EVENT_SELECTED_JMP = 'sj'
+EVENT_MOVED = 'mv'
 
 
 class _Player:
@@ -16,6 +20,7 @@ class _Player:
         self.enemy_color = enemy_color
         self.placed = 0  # placed pieces
         self.state = _StatePlace()
+        self.selected = None
 
     def handle_touch(self, field_id):
         pass
@@ -29,18 +34,45 @@ class _Player:
 
 class PlayerHuman(_Player):
     def handle_touch(self, field_id):
+        event = EVENT_NULL
         if self.state == 'Place':
             possible_moves = self.board.get_empty_fields()
             if field_id in possible_moves:
                 self.board.place(field_id, Piece(self.color))
                 self.placed += 1
-                event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_EMPTY_FIELD
-                self.state = self.state.on_event(event)
+                event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_SELECTED_MV
         elif self.state == 'Remove':
             possible_moves = self.board.get_color_fields(self.enemy_color)
             if field_id in possible_moves:
                 self.board.remove(field_id)
-                self.state = self.state.on_event(EVENT_REMOVED)
+                event = EVENT_REMOVED
+        elif self.state == 'Select':
+            possible_selections = self.board.get_color_fields(self.color)
+            if field_id in possible_selections:
+                self.selected = field_id
+                event = EVENT_SELECTED_MV if len(possible_selections) > JUMP_THRESHOLD else EVENT_SELECTED_JMP
+        elif self.state == 'Move':
+            possible_selections = self.board.get_color_fields(self.color)
+            if field_id in possible_selections:
+                self.selected = field_id
+                event = EVENT_SELECTED_MV
+            else:
+                possible_moves = self.board.get_moves(self.selected)
+                if field_id in possible_moves:
+                    self.board.move(self.selected, field_id)
+                    event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_MOVED
+        elif self.state == 'Jump':
+            possible_selections = self.board.get_color_fields(self.color)
+            if field_id in possible_selections:
+                self.selected = field_id
+                event = EVENT_SELECTED_JMP
+            else:
+                possible_moves = self.board.get_jumps(self.selected)
+                if field_id in possible_moves:
+                    self.board.move(self.selected, field_id)
+                    event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_MOVED
+
+        self.state = self.state.on_event(event)
 
 
 class PlayerAI(_Player):
@@ -59,7 +91,7 @@ class _PlayerState:
 
 class _StatePlace(_PlayerState):
     def on_event(self, event):
-        if event == EVENT_EMPTY_FIELD:
+        if event == EVENT_SELECTED_MV:
             return _StateDone()
         elif event == EVENT_MILL:
             return _StateRemove()
@@ -67,11 +99,30 @@ class _StatePlace(_PlayerState):
 
 
 class _StateSelect(_PlayerState):
-    pass
+    def on_event(self, event):
+        if event == EVENT_SELECTED_MV:
+            return _StateMove()
+        elif event == EVENT_SELECTED_JMP:
+            return _StateJump()
+        return self
 
 
 class _StateMove(_PlayerState):
-    pass
+    def on_event(self, event):
+        if event == EVENT_MOVED:
+            return _StateDone()
+        elif event == EVENT_MILL:
+            return _StateRemove()
+        return self
+
+
+class _StateJump(_PlayerState):
+    def on_event(self, event):
+        if event == EVENT_MOVED:
+            return _StateDone()
+        elif event == EVENT_MILL:
+            return _StateRemove()
+        return self
 
 
 class _StateRemove(_PlayerState):

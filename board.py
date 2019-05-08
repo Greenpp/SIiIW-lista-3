@@ -38,11 +38,25 @@ class Board:
     def get_color_fields(self, color):
         return [id_ for id_, f in self.fields.items() if f.occupation is not None and f.occupation.color == color]
 
-    def get_last_pos(self, field):
-        return self.fields[field].occupation.last_position
+    def get_last_pos(self, field_id):
+        return self.fields[field_id].occupation.last_position
 
-    def in_mill(self, field):
-        mills = self.fields[field].mills
+    def get_moves(self, field_id):
+        field = self.fields[field_id]
+        moves = [f.id for f in field.neighbours if f.occupation is None]
+        if field.occupation.last_position in moves:
+            moves.remove(field.occupation.last_position)
+        return moves
+
+    def get_jumps(self, field_id):
+        field = self.fields[field_id]
+        moves = self.get_empty_fields()
+        if field.occupation.last_position in moves:
+            moves.remove(field.occupation.last_position)
+        return moves
+
+    def in_mill(self, field_id):
+        mills = self.fields[field_id].mills
         for mill in mills:
             if mill.check():
                 return True
