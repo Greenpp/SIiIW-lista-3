@@ -1,7 +1,7 @@
 from board import Board
 from piece import Piece
 
-PIECES = 5
+PIECES = 9
 JUMP_THRESHOLD = 3
 
 EVENT_NULL = 'n'
@@ -18,7 +18,7 @@ class _Player:
         self.board = board
         self.color = color
         self.enemy_color = enemy_color
-        self.placed = 0  # placed pieces
+        self.placed = 0
         self.state = _StatePlace()
         self.selected = None
 

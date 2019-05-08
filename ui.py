@@ -9,6 +9,7 @@ class MorrisApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.engine = Engine()
+        self.engine.setup()
         self.fields = []
 
     def build(self):
@@ -16,10 +17,9 @@ class MorrisApp(App):
         return GameLayout()
 
     def update_board_view(self):
-        if not self.fields:
-            fields = self.root.ids.board_view.children
-            self.fields = [(f, self.engine.board.fields[f.field_id]) for f in fields if
-                           f.field_id in self.engine.board.fields]
+        fields = self.root.ids.board_view.children
+        self.fields = [(f, self.engine.board.fields[f.field_id]) for f in fields if
+                       f.field_id in self.engine.board.fields]
         for widget, field in self.fields:
             if field.occupation is None:
                 widget.clear()
@@ -40,6 +40,16 @@ class BoardLayout(GridLayout):
             for i in range(7):
                 button = FieldButton(f'{n}{i + 1}')
                 self.add_widget(button)
+
+
+class ResetButton(Button):
+    def __init__(self, **kwargs):
+        super(ResetButton, self).__init__(**kwargs)
+
+    def on_press(self):
+        app = App.get_running_app()
+        app.engine.reset()
+        app.update_board_view()
 
 
 class FieldButton(Button):

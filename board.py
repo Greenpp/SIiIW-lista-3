@@ -62,6 +62,20 @@ class Board:
                 return True
         return False
 
+    def has_moves(self, color):
+        pieces = self.get_color_fields(color)
+        if len(pieces) > 3:
+            for piece in pieces:
+                moves = self.get_moves(piece)
+                if len(moves) > 0:
+                    return True
+        else:
+            for piece in pieces:
+                moves = self.get_jumps(piece)
+                if len(moves) > 0:
+                    return True
+        return False
+
     def place(self, dest, piece):
         self.fields[dest].occupation = piece
 
