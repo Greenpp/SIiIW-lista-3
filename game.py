@@ -8,8 +8,11 @@ class Engine:
     def __init__(self):
         self.board = Board()
 
-        self.player1 = PlayerHuman(self.board, 'white')
-        self.player2 = PlayerHuman(self.board, 'black')
+        color1 = 'white'
+        color2 = 'black'
+
+        self.player1 = PlayerHuman(self.board, color1, color2)
+        self.player2 = PlayerHuman(self.board, color2, color1)
 
         self.queue = cycle([self.player1, self.player2])
         self.current_player = None

@@ -1,17 +1,19 @@
 from board import Board
 from piece import Piece
 
-PIECES = 2
+PIECES = 3
 
 EVENT_EMPTY_FIELD = 'empty_field'
 EVENT_MILL = 'mill'
+EVENT_REMOVED = 'removed'
 
 
 class _Player:
-    def __init__(self, board, color, name=None):
+    def __init__(self, board, color, enemy_color, name=None):
         self.name = name if name is not None else f'Player_{color}'
         self.board = board
         self.color = color
+        self.enemy_color = enemy_color
         self.placed = 0  # placed pieces
         self.state = _StatePlace()
 
@@ -32,7 +34,13 @@ class PlayerHuman(_Player):
             if field_id in possible_moves:
                 self.board.place(field_id, Piece(self.color))
                 self.placed += 1
-                self.state = self.state.on_event(EVENT_EMPTY_FIELD)
+                event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_EMPTY_FIELD
+                self.state = self.state.on_event(event)
+        elif self.state == 'Remove':
+            possible_moves = self.board.get_color_fields(self.enemy_color)
+            if field_id in possible_moves:
+                self.board.remove(field_id)
+                self.state = self.state.on_event(EVENT_REMOVED)
 
 
 class PlayerAI(_Player):
@@ -67,7 +75,10 @@ class _StateMove(_PlayerState):
 
 
 class _StateRemove(_PlayerState):
-    pass
+    def on_event(self, event):
+        if event == EVENT_REMOVED:
+            return _StateDone()
+        return self
 
 
 class _StateDone(_PlayerState):

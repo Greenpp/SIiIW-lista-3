@@ -58,6 +58,9 @@ class Board:
 
         self.fields[source].occupation = None
 
+    def remove(self, field):
+        self.fields[field].occupation = None
+
     def get_state(self):
         pass
 
