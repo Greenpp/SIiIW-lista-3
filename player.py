@@ -43,7 +43,7 @@ class PlayerHuman(_Player):
                 event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_SELECTED_MV
         elif self.state == 'Remove':
             possible_moves = self.board.get_color_fields(self.enemy_color)
-            if field_id in possible_moves:
+            if field_id in possible_moves and not self.board.in_mill(field_id):
                 self.board.remove(field_id)
                 event = EVENT_REMOVED
         elif self.state == 'Select':

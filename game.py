@@ -1,4 +1,5 @@
 from itertools import cycle
+from time import time
 
 from board import Board
 from player import PlayerHuman
@@ -12,13 +13,13 @@ class Engine:
         self.round = None
         self.queue = None
         self.current_player = None
+        self.round_start_time = None
 
     def next_round(self):
         self.round += 1
         if self.round > 18:
             if self.current_won():
                 print(f'Player {self.current_player.name} won !')
-                self.setup()
         self.current_player = next(self.queue)
         print(f'Round {self.round}, player: {self.current_player.name}')
         self.current_player.awake()
@@ -28,6 +29,14 @@ class Engine:
         if self.current_player.state == 'Done':
             self.next_round()
 
+    def get_round_time(self):
+        if self.round_start_time is None:
+            return 0
+        current_time = time()
+        delta = current_time - self.round_start_time
+
+        return delta
+
     def setup(self):
         self.board = Board()
 
@@ -36,6 +45,7 @@ class Engine:
 
         self.player1 = PlayerHuman(self.board, color1, color2)
         self.player2 = PlayerHuman(self.board, color2, color1)
+        self.round_start_time = time()
         self.queue = cycle([self.player1, self.player2])
 
         self.round = 0

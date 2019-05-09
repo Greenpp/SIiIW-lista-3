@@ -1,6 +1,8 @@
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
+from kivy.clock import Clock
 
 from game import Engine
 
@@ -28,9 +30,25 @@ class MorrisApp(App):
             else:
                 widget.set_black()
 
+    def update_clock(self, dt):
+        round_time = self.engine.get_round_time()
+        round_sec = round(round_time)
+        mins = round_sec // 60
+        secs = round_sec % 60
+
+        label = self.root.ids.clock_label
+        label.text = f'{mins:02}:{secs:02}'
+
 
 class GameLayout(GridLayout):
     pass
+
+
+class ClockLabel(Label):
+    def __init__(self, **kwargs):
+        super(ClockLabel, self).__init__(**kwargs)
+        callback = App.get_running_app().update_clock
+        Clock.schedule_interval(callback, 1)
 
 
 class BoardLayout(GridLayout):
@@ -49,6 +67,7 @@ class ResetButton(Button):
     def on_press(self):
         app = App.get_running_app()
         app.engine.reset()
+        app.update_clock(None)
         app.update_board_view()
 
 
