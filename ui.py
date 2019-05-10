@@ -39,10 +39,10 @@ class MorrisApp(App):
         name1 = p1.name
         name2 = p2.name
 
-        if p1.state == 'Done':
-            name2 = f'[b]{name2}[/b]'
-        else:
+        if p2.state == 'Done':
             name1 = f'[b]{name1}[/b]'
+        else:
+            name2 = f'[b]{name2}[/b]'
 
         label1 = self.root.ids.player1_label
         label2 = self.root.ids.player2_label
@@ -70,6 +70,7 @@ class MorrisApp(App):
         self.engine.setup()
         self.update_clock(None)
         self.update_board_view()
+        self.update_players()
         self.root.ids.start_button.disabled = False
 
 
