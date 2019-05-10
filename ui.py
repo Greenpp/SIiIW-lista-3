@@ -30,6 +30,26 @@ class MorrisApp(App):
             else:
                 widget.set_black()
 
+    def on_start(self):
+        self.update_players()
+
+    def update_players(self):
+        p1 = self.engine.player1
+        p2 = self.engine.player2
+        name1 = p1.name
+        name2 = p2.name
+
+        if p1.state == 'Done':
+            name2 = f'[b]{name2}[/b]'
+        else:
+            name1 = f'[b]{name1}[/b]'
+
+        label1 = self.root.ids.player1_label
+        label2 = self.root.ids.player2_label
+
+        label1.text = name1
+        label2.text = name2
+
     def update_clock(self, dt):
         round_time = self.engine.get_round_time()
         round_sec = round(round_time)
@@ -38,6 +58,19 @@ class MorrisApp(App):
 
         label = self.root.ids.clock_label
         label.text = f'{mins:02}:{secs:02}'
+
+    def start_game(self):
+        self.root.ids.start_button.disabled = True
+        self.engine.start()
+        self.update_players()
+        self.root.ids.reset_button.disabled = False
+
+    def reset_game(self):
+        self.root.ids.reset_button.disabled = True
+        self.engine.setup()
+        self.update_clock(None)
+        self.update_board_view()
+        self.root.ids.start_button.disabled = False
 
 
 class GameLayout(GridLayout):
@@ -60,15 +93,22 @@ class BoardLayout(GridLayout):
                 self.add_widget(button)
 
 
+class StartButton(Button):
+    def __init__(self, **kwargs):
+        super(StartButton, self).__init__(**kwargs)
+
+    def on_press(self):
+        app = App.get_running_app()
+        app.start_game()
+
+
 class ResetButton(Button):
     def __init__(self, **kwargs):
         super(ResetButton, self).__init__(**kwargs)
 
     def on_press(self):
         app = App.get_running_app()
-        app.engine.reset()
-        app.update_clock(None)
-        app.update_board_view()
+        app.reset_game()
 
 
 class FieldButton(Button):
@@ -84,6 +124,7 @@ class FieldButton(Button):
 
         eng.handle_touch(self.field_id)
         app.update_board_view()
+        app.update_players()
 
     def clear(self):
         self.background_color = (0, 0, 0, 0)

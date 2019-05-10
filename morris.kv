@@ -16,6 +16,8 @@
             anchor_y: 'bottom'
 
             ResetButton:
+                id: reset_button
+                disabled: True
                 text: 'Reset'
                 size_hint: (.5, .05)
 
@@ -27,6 +29,36 @@
                 id: clock_label
                 text: '00:00'
                 font_size: 50
+
+        AnchorLayout:
+            anchor_x: 'left'
+            anchor_y: 'top'
+
+            Label:
+                id: player1_label
+                markup: True
+                text: 'Player1'
+                size_hint: (.5, .05)
+
+        AnchorLayout:
+            anchor_x: 'right'
+            anchor_y: 'top'
+
+            Label:
+                id: player2_label
+                markup: True
+                text: 'Player2'
+                size_hint: (.5, .05)
+
+        AnchorLayout:
+            anchor_x: 'right'
+            anchor_y: 'bottom'
+
+            StartButton:
+                id: start_button
+                text: 'Start'
+                size_hint: (.5, .05)
+
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'

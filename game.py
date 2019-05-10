@@ -14,6 +14,7 @@ class Engine:
         self.queue = None
         self.current_player = None
         self.round_start_time = None
+        self.running = False
 
     def next_round(self):
         self.round += 1
@@ -26,7 +27,7 @@ class Engine:
 
     def handle_touch(self, field_id):
         self.current_player.handle_touch(field_id)
-        if self.current_player.state == 'Done':
+        if self.running and self.current_player.state == 'Done':
             self.next_round()
 
     def get_round_time(self):
@@ -38,6 +39,7 @@ class Engine:
         return delta
 
     def setup(self):
+        self.running = False
         self.board = Board()
 
         color1 = 'white'
@@ -45,14 +47,16 @@ class Engine:
 
         self.player1 = PlayerHuman(self.board, color1, color2)
         self.player2 = PlayerHuman(self.board, color2, color1)
-        self.round_start_time = time()
         self.queue = cycle([self.player1, self.player2])
+        self.current_player = self.player1
 
+        self.round_start_time = None
         self.round = 0
-        self.next_round()
 
-    def reset(self):
-        self.setup()
+    def start(self):
+        self.running = True
+        self.round_start_time = time()
+        self.next_round()
 
     def current_won(self):
         pieces = self.board.get_color_fields(self.current_player.enemy_color)

@@ -19,7 +19,7 @@ class _Player:
         self.color = color
         self.enemy_color = enemy_color
         self.placed = 0
-        self.state = _StatePlace()
+        self.state = _StateDone()
         self.selected = None
 
     def handle_touch(self, field_id):
@@ -133,4 +133,5 @@ class _StateRemove(_PlayerState):
 
 
 class _StateDone(_PlayerState):
-    pass
+    def on_event(self, event):
+        return self
