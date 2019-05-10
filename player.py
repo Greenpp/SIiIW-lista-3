@@ -6,6 +6,7 @@ JUMP_THRESHOLD = 3
 
 EVENT_NULL = 'n'
 EVENT_MILL = 'm'
+EVENT_DOUBLE_MILL = '2m'
 EVENT_REMOVED = 'rm'
 EVENT_SELECTED_MV = 'sm'
 EVENT_SELECTED_JMP = 'sj'
@@ -40,7 +41,13 @@ class PlayerHuman(_Player):
             if field_id in possible_moves:
                 self.board.place(field_id, Piece(self.color))
                 self.placed += 1
-                event = EVENT_MILL if self.board.in_mill(field_id) else EVENT_SELECTED_MV
+                in_mills = self.board.in_mill(field_id)
+                if in_mills == 2:
+                    event = EVENT_DOUBLE_MILL
+                elif in_mills:
+                    event = EVENT_MILL
+                else:
+                    event = EVENT_SELECTED_MV
         elif self.state == 'Remove':
             possible_moves = self.board.get_color_fields(self.enemy_color)
             if field_id in possible_moves and not self.board.in_mill(field_id):
@@ -94,7 +101,9 @@ class _StatePlace(_PlayerState):
         if event == EVENT_SELECTED_MV:
             return _StateDone()
         elif event == EVENT_MILL:
-            return _StateRemove()
+            return _StateRemove(1)
+        elif event == EVENT_DOUBLE_MILL:
+            return _StateRemove(2)
         return self
 
 
@@ -112,7 +121,7 @@ class _StateMove(_PlayerState):
         if event == EVENT_MOVED:
             return _StateDone()
         elif event == EVENT_MILL:
-            return _StateRemove()
+            return _StateRemove(1)
         return self
 
 
@@ -121,14 +130,19 @@ class _StateJump(_PlayerState):
         if event == EVENT_MOVED:
             return _StateDone()
         elif event == EVENT_MILL:
-            return _StateRemove()
+            return _StateRemove(1)
         return self
 
 
 class _StateRemove(_PlayerState):
+    def __init__(self, num):
+        self.num = num
+
     def on_event(self, event):
         if event == EVENT_REMOVED:
-            return _StateDone()
+            self.num -= 1
+            if not self.num:
+                return _StateDone()
         return self
 
 

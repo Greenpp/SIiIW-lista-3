@@ -57,10 +57,11 @@ class Board:
 
     def in_mill(self, field_id):
         mills = self.fields[field_id].mills
+        mill_num = 0
         for mill in mills:
             if mill.check():
-                return True
-        return False
+                mill_num += 1
+        return mill_num
 
     def has_moves(self, color):
         pieces = self.get_color_fields(color)
